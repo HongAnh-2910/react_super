@@ -1,9 +1,23 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = (env) => {
   const isDevelopment = Boolean(env.development);
+  let pluginArry = [
+      //MiniCssExtractPlugin build file css rieng
+      new MiniCssExtractPlugin({
+        filename: "[name].[contenthash].css",
+      }),
+      // build file html va tu dong link file js
+      new HtmlWebpackPlugin({
+        title: "My App",
+        filename: "index.html",
+        template: "src/template.html",
+      }),
+    ];
+    let plugins = isDevelopment ? pluginArry : [...pluginArry ,  new BundleAnalyzerPlugin()]
   return {
     mode: isDevelopment ? "development" : "production",
     entry: {
@@ -29,18 +43,7 @@ module.exports = (env) => {
       hot: true, // load nhanh
       historyApiFallback: true,
     },
-    plugins: [
-      //MiniCssExtractPlugin build file css rieng
-      new MiniCssExtractPlugin({
-        filename: "[name].[contenthash].css",
-      }),
-      // build file html va tu dong link file js
-      new HtmlWebpackPlugin({
-        title: "My App",
-        filename: "index.html",
-        template: "src/template.html",
-      }),
-    ],
+    plugins,
     module: {
       rules: [
         {
@@ -56,15 +59,7 @@ module.exports = (env) => {
         },
         {
           test: /\.m?js$/,
-          exclude: {
-            and: [/node_modules/], // Exclude libraries in node_modules ...
-            not: [
-              // Except for a few of them that needs to be transpiled because they use modern syntax
-              /unfetch/,
-              /d3-array|d3-scale/,
-              /@hapi[\\/]joi-date/,
-            ],
-          },
+          exclude:/node_modules/,
           use: {
             loader: "babel-loader",
             options: {

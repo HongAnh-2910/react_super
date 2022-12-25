@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "nodemon": "nodemon src/index.js localhost 8080",
-    "webpack": "webpack --env development=true ",
-    "serve": "webpack serve"
+    "webpack": "webpack",
+    "serve": "webpack serve --env development=true"
   },
   "author": "trung",
   "license": "ISC",
@@ -23,6 +23,7 @@
     "sass": "^1.57.1",
     "sass-loader": "^13.2.0",
     "webpack": "^5.75.0",
+    "webpack-bundle-analyzer": "^4.7.0",
     "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.11.1"
   },
