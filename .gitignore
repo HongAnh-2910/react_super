@@ -1,6 +1,7 @@
 node_modules/
-dist/**
-!dist/index.html
+# dist/**
+dist/
+# !dist/index.html
 
 # folder thêm dấu /
 # loai bỏ tất cả file trong dist và để lại index.html
