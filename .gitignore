@@ -1,2 +1,9 @@
-node_modules
-dist
+node_modules/
+dist/**
+!dist/index.html
+
+# folder thêm dấu /
+# loai bỏ tất cả file trong dist và để lại index.html
+# dist/** loại tất cả trong dist
+# !dist/index.html loai trừ index.html phủ định !
+# logs* loại bỏ tất cả file có tên là log
