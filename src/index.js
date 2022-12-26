@@ -12,9 +12,7 @@ console.log(sum(1,6))
 const objectStuden = {
     name:'Trung' , cntt:'Bk'
 }
-
 console.log('Object.values', Object.values(objectStuden))
-
 let myPromise  = new Promise((resolve, reject) => {
     setTimeout(function(){
         resolve(100)
