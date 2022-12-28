@@ -5,7 +5,7 @@ class Http {
             baseURL: 'http://localhost:4000',
             timeout: 1000,
         })
-
+        this.refresh_token = null
         this.instance.interceptors.request.use(function (config) {
             const getToken = localStorage.getItem('access_token')
             if(getToken)
@@ -22,12 +22,22 @@ class Http {
             // Bất kì mã trạng thái nào nằm trong tầm 2xx đều khiến hàm này được trigger
             // Làm gì đó với dữ liệu response
             return response.data;
-          }, function (error) {
-            console.log(error)
-            // Bất kì mã trạng thái nào lọt ra ngoài tầm 2xx đều khiến hàm này được trigger\
-            // Làm gì đó với lỗi response
-            return Promise.reject(error);
-          });
+          }, (error) => {
+            if(error.response.status === 401)
+            {
+                this.refresh_token = this.refresh_token ? this.refresh_token : refreshToken().finally(()=> {
+                    this.refresh_token = null
+                })
+               return this.refresh_token.then((access_token) => {
+                    error.response.config.Authorization = access_token
+                   return this.instance(error.response.config)
+                })
+            }
+            return
+        // Bất kì mã trạng thái nào lọt ra ngoài tầm 2xx đều khiến hàm này được trigger\
+        // Làm gì đó với lỗi response
+        return Promise.reject(error);
+          })
     }
 
     /**
@@ -51,7 +61,50 @@ class Http {
     {
         return this.instance.post(url , body)
     }
+
+    refresh(url , body)
+    {
+        return this.instance.post(url , body)
+    }
 }
+
+function profile()
+{
+    http.get('/profile')
+    .then((res)=>{
+        console.log(res)
+    })
+    .catch((error)=>{
+        return error
+    })
+}
+
+function product()
+{
+    http.get('/products')
+    .then((res)=>{
+        console.log(res)
+    })
+    .catch((error)=>{
+        return error
+    })
+}
+
+async function refreshToken() 
+{
+    const refresh_token = localStorage.getItem('refresh_token')
+    try {
+       const res = await http.refresh('/refresh-token' , {
+            refresh_token
+        })
+        const {access_token} = res.data
+        localStorage.setItem('access_token' , access_token)
+        return access_token
+    } catch (error) {
+        return error
+    }
+}
+
  const http = new Http()
 document.getElementById('form_login').addEventListener('submit' , function(event){
     event.preventDefault()
@@ -70,8 +123,18 @@ document.getElementById('form_login').addEventListener('submit' , function(event
 })
 
 document.getElementById('get_profile').addEventListener('click' , function(){
-    http.get('/profile')
-    .then((res)=>{
-        console.log(res)
-    })
+    profile()
+})
+
+document.getElementById('get_product').addEventListener('click' , function(){
+    product()
+})
+
+document.getElementById('get_both').addEventListener('click' , function(){
+    profile()
+    product()
+})
+
+document.getElementById('refresh_token').addEventListener('click' , function(){
+    refreshToken()
 })
