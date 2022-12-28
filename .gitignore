@@ -1,6 +1,7 @@
 node_modules/
 # dist/**
 dist/
+.idea/
 # !dist/index.html
 
 # folder thêm dấu /
