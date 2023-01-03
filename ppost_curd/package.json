@@ -9,6 +9,7 @@
     "serve-product": "vite preview"
   },
   "devDependencies": {
+    "axios": "^1.2.2",
     "vite": "^4.0.0"
   }
 }
