@@ -1,0 +1,14 @@
+{
+  "name": "ppost_curd",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve-product": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^4.0.0"
+  }
+}
