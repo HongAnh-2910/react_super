@@ -12,20 +12,20 @@ export default class Clock extends React.Component {
         created: new Date().getSeconds(),
       },
     };
-    console.log(this);
   }
   setTime() {
-    const newState = {
-      ...this.state,
-      time: {
-        created: new Date().toTimeString(),
-      },
-      seconds: {
-        ...this.state.seconds,
-        created: new Date().getSeconds(),
-      },
-    };
-    this.setState(newState);
+    console.log(this)
+    // const newState = {
+    //   ...this.state,
+    //   time: {
+    //     created: new Date().toTimeString(),
+    //   },
+    //   seconds: {
+    //     ...this.state.seconds,
+    //     created: new Date().getSeconds(),
+    //   },
+    // };
+    // this.setState(newState);
   }
   render() {
     return (
