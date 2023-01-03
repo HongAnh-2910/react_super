@@ -8,11 +8,10 @@ export default class Clock extends React.Component {
         created: new Date().toTimeString(),
       },
       seconds: {
-        dragon: "123",
         created: new Date().getSeconds(),
       },
     };
-    console.log(this);
+    this.setTime = this.setTime.bind(this);
   }
   setTime() {
     const newState = {
