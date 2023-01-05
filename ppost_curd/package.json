@@ -11,6 +11,7 @@
   "devDependencies": {
     "axios": "^1.2.2",
     "dayjs": "^1.11.7",
+    "lodash": "^4.17.21",
     "vite": "^4.0.0"
   }
 }

@@ -1,4 +1,5 @@
 import apiPost from "./api/apiPost";
+import { debounce } from "lodash";
 import {
   setTextContent,
   setImages,
@@ -41,6 +42,7 @@ function renderListPost(data) {
 async function handleBaseParams(filterName, filterValue) {
   const url = new URL(window.location);
   url.searchParams.set(filterName, filterValue);
+  if (filterName === "title_like") url.searchParams.set("_page", 1);
   history.pushState({}, "", url);
   try {
     let queryParams = new URLSearchParams(window.location.search);
@@ -71,17 +73,6 @@ function handleClickNext(event) {
   handleBaseParams("_page", Number(page) + 1);
 }
 
-function renderPaginateList(pagination) {
-  const getIdPaginateUl = selectIdElment("postsPagination");
-  if (!getIdPaginateUl) return;
-  const { _page, _limit, _totalRows } = pagination;
-  const totalPage = Math.ceil(_totalRows / _limit);
-  const html =
-    "<li class='age-item_1'><a class='page-link' href='#'>2</a></li>";
-  getIdPaginateUl.querySelector(".page-item_1").apendChild(html);
-  for (let index = 1; index <= totalPage; index++) {}
-}
-
 function renderPaginate(pagination) {
   const getIdPaginateUl = selectIdElment("postsPagination");
   if (Object.keys(pagination).length === 0) return;
@@ -94,8 +85,12 @@ function renderPaginate(pagination) {
   if (_page >= totalPage)
     getIdPaginateUl.lastElementChild.classList.add("disabled");
   else getIdPaginateUl.lastElementChild.classList.remove("disabled");
+}
 
-  renderPaginateList(pagination);
+function handleClickPage(event) {
+  event.preventDefault();
+  const getPage = this.firstElementChild.getAttribute("data-page");
+  handleBaseParams("_page", Number(getPage));
 }
 
 function initPaginate() {
@@ -105,6 +100,11 @@ function initPaginate() {
   clickPrev.addEventListener("click", handleClickPrev);
   let clickNext = getIdPaginateUl.lastElementChild.lastElementChild;
   clickNext.addEventListener("click", handleClickNext);
+
+  let clickPage = getIdPaginateUl.querySelectorAll(".page-item_1");
+  for (const element of clickPage) {
+    element.addEventListener("click", handleClickPage);
+  }
 }
 
 function initParams() {
@@ -114,10 +114,24 @@ function initParams() {
   history.pushState({}, "", url);
 }
 
+function initSearchParams() {
+  const getIdinputSearch = selectIdElment("search-input");
+  if (!getIdinputSearch) return;
+  let queryParams = new URLSearchParams(window.location.search);
+  if (queryParams.get("title_like"))
+    getIdinputSearch.value = queryParams.get("title_like");
+  const debounceFun = debounce(
+    (e) => handleBaseParams("title_like", e.target.value),
+    500
+  );
+  getIdinputSearch.addEventListener("input", debounceFun);
+}
+
 (async () => {
   try {
     initParams();
     initPaginate();
+    initSearchParams();
     let queryParams = new URLSearchParams(window.location.search);
     // dungf new URLSearchParams chuyenr toString de nhin thay params
     // queryParams.toString()
