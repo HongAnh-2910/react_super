@@ -65,6 +65,8 @@ function initParams() {
     initPaginate();
     initParams();
     let queryParams = new URLSearchParams(window.location.search);
+    // dungf new URLSearchParams chuyenr toString de nhin thay params
+    // queryParams.toString()
     const { data, paginate } = await apiPost.getAll(queryParams);
     renderListPost(data);
   } catch (error) {
