@@ -112,6 +112,7 @@ function initParams() {
   if (!url.searchParams.get("_page")) url.searchParams.set("_page", 1);
   if (!url.searchParams.get("_limit")) url.searchParams.set("_limit", 10);
   history.pushState({}, "", url);
+  console.log(url);
 }
 
 function initSearchParams() {
