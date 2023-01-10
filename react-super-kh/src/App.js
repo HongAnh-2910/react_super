@@ -1,10 +1,9 @@
-import "./App.css";
-import Clock from "./Clock";
+import FeatureAlbum from "./features/Album";
 
 function App() {
   return (
     <div className="App">
-      <Clock />
+      <FeatureAlbum />
     </div>
   );
 }
