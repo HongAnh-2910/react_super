@@ -1,0 +1,22 @@
+.list__album {
+  & > li {
+    img {
+      width: 150px;
+      border-radius: 0.25rem;
+    }
+    img:hover {
+      cursor: pointer;
+    }
+
+    p {
+      margin-top: 5px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    p:hover {
+      cursor: pointer;
+    }
+  }
+}
