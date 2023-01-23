@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="form_login">
+        <div class="username">
+            <label>UserName</label>
+            <input type="text" name="user_name" id="username" value="admin">
+        </div>
+        <div class="password">
+            <label>Password</label>
+            <input type="password" name="password" id="password" value="admin">
+        </div>
+        <button id="submit_form">Đăng nhập</button>
+    </form>
+    <button id="get_profile">Profile</button>
+    <button id="get_product">Product</button>
+    <button id="get_both">Product/Profile</button>
+    <button id="refresh_token">Refresh token</button>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./app.js"></script>
+</body>
+</html>
