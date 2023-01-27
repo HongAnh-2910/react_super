@@ -67,13 +67,17 @@ class Clock extends React.Component {
       seconds: { ...this.state.seconds, created: new Date().getSeconds() },
     });
   };
-
-  handleToggle = () => {
+  // curring fuction
+  handleToggle = () => () => {
     console.log("123");
     // this.setState((prev) => ({
     //   ...prev,
     //   toogleDark: !prev.toogleDark,
     // }));
+  };
+
+  handleCURD = (event, value) => {
+    console.log(event, value);
   };
   render() {
     console.log("render");
@@ -101,9 +105,21 @@ class Clock extends React.Component {
         <button onClick={this.handleClickTime} className="clickTime">
           Click me
         </button>
-        <button onClick={this.handleToggle} className="clickTime">
+        <button onClick={this.handleToggle()} className="clickTime">
           Click Toggle
         </button>
+        <button
+          onClick={(event) => this.handleCURD(event, "add")}
+          className="clickTime"
+        >
+          Add
+        </button>
+        {/* <button onClick={this.handleCURD("edit")} className="clickTime">
+          Edit
+        </button>
+        <button onClick={this.handleCURD("delete")} className="clickTime">
+          Delete
+        </button> */}
       </div>
     );
   }

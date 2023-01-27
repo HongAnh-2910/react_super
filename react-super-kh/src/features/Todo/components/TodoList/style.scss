@@ -1,0 +1,10 @@
+.list__todo {
+  & > li {
+    cursor: pointer;
+  }
+  & > li.cancel {
+    font-style: italic;
+    text-decoration: line-through;
+    color: gray;
+  }
+}
