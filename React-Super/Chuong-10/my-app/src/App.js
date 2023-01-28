@@ -5,6 +5,7 @@ import LoginControl from "./LoginControl";
 import CoreState from "./CoreState";
 import ProductList from "./Products/ProductList";
 import Form from "./Form";
+import Uncontrolled from "./Uncontrolled";
 
 function App() {
   const [hide, setHide] = useState(true);
@@ -18,7 +19,8 @@ function App() {
       <ProductList /> */}
       {/* <button onClick={handleClickHide}>Click hide component Clock</button>
       {hide && <Clock />} */}
-      <Form />
+      {/* <Form /> */}
+      <Uncontrolled />
     </div>
   );
 }

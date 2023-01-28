@@ -35,7 +35,7 @@ class Form extends Component {
   handleCheckBoxChange = (id) => {
     let check = this.state.checkedId.includes(id);
     if (check) {
-      let stateNew = this.state.checkedId.filter((x, index) => x !== id);
+      let stateNew = this.state.checkedId.filter((x) => x !== id);
       this.setState({
         checkedId: [...stateNew],
       });
