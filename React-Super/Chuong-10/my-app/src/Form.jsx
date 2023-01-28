@@ -8,6 +8,13 @@ class Form extends Component {
       name: "",
       textArea: "",
       checkedActive: true,
+      listCouse: [
+        { id: 1, name: "React" },
+        { id: 2, name: "Html" },
+        { id: 3, name: "Laravel" },
+      ],
+      checkedId: [2],
+      radioId: 1,
     };
   }
 
@@ -16,25 +23,31 @@ class Form extends Component {
     console.log(this.state);
   };
 
-  handleInputText = (event) => {
-    const { value } = event.target;
+  handleChange = (event, id = "") => {
+    console.log(event);
+    const { name, value: valueChange, type } = event.target;
+    let value = type === "radio" ? id : valueChange;
     this.setState({
-      name: value,
+      [name]: value,
     });
   };
 
-  handleTextAreaChange = (event) => {
-    const { value } = event.target;
-    this.setState({
-      textArea: value,
-    });
+  handleCheckBoxChange = (id) => {
+    let check = this.state.checkedId.includes(id);
+    if (check) {
+      let stateNew = this.state.checkedId.filter((x, index) => x !== id);
+      this.setState({
+        checkedId: [...stateNew],
+      });
+    } else {
+      this.setState((prev) => ({
+        checkedId: [...prev.checkedId, id],
+      }));
+    }
   };
-
-  handleCheckedChange = (event) => {
-    const { checked, value } = event.target;
-    console.log(value);
+  handleRadioChange = (id) => {
     this.setState({
-      checkedActive: checked,
+      radioId: id,
     });
   };
 
@@ -47,20 +60,43 @@ class Form extends Component {
             type="text"
             value={this.state.name}
             name="name"
-            onChange={this.handleInputText}
+            onChange={this.handleChange}
           />
           <textarea
             name="textArea"
             value={this.state.textArea}
-            onChange={this.handleTextAreaChange}
+            onChange={this.handleChange}
           />
-          <input
-            type="checkbox"
-            name="checkedActive"
-            value="123"
-            checked={this.state.checkedActive}
-            onChange={this.handleCheckedChange}
-          />
+          <ul className="list">
+            {this.state.listCouse.map((item) => (
+              <li key={item.id}>
+                <input
+                  type="checkbox"
+                  checked={this.state.checkedId.includes(item.id)}
+                  onChange={() => this.handleCheckBoxChange(item.id)}
+                />
+                <span style={{ display: "inline-block", width: "50px" }}>
+                  {item.name}
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <ul className="list">
+            {this.state.listCouse.map((item) => (
+              <li key={item.id}>
+                <input
+                  type="radio"
+                  name="radioId"
+                  checked={this.state.radioId === item.id}
+                  onChange={(event) => this.handleChange(event, item.id)}
+                />
+                <span style={{ display: "inline-block", width: "50px" }}>
+                  {item.name}
+                </span>
+              </li>
+            ))}
+          </ul>
           <button>submit</button>
         </form>
       </div>
