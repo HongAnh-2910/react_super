@@ -1,11 +1,11 @@
 import "./App.css";
-import Products from "./Products/Products";
+import User from "./User";
 
 function App() {
   return (
     <div className="App">
-      {/* <Cart /> */}
-      <Products />
+      <User />
+      {/* <LifeCycle /> */}
     </div>
   );
 }
