@@ -1,0 +1,32 @@
+.taskList {
+  .list {
+    .item {
+      margin: 0.7rem 0px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .taskName {
+        font-size: 0.9rem;
+        margin-left: 10px;
+        &.taskNameDone {
+          color: gray;
+          text-decoration: line-through;
+        }
+      }
+      .task {
+        display: flex;
+      }
+      .itemAction {
+        button {
+          padding: 5px 6px;
+          margin-right: 5px;
+          border: 1px solid gray;
+          cursor: pointer;
+        }
+        button:hover {
+          background-color: bisque;
+        }
+      }
+    }
+  }
+}

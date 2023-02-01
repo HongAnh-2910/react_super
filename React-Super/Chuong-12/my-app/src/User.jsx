@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import UserInfo from "./UserInfo";
 
 const infoUser = () => {
   return {
@@ -39,7 +40,10 @@ const fetApi = () => {
     }, 4000);
   });
 };
-
+export const UserContext = React.createContext({
+  users: infoUserApi(),
+  age: infoUserApi().age,
+});
 export default function User() {
   const [age, setAge] = useState(20);
   const [user, setUser] = useState(infoUser);
@@ -66,26 +70,21 @@ export default function User() {
 
   useEffect(() => {
     fetApi().then((res) => {
-      const newUser = { ...user };
-      newUser.address = res.address;
-      setUser(newUser);
-      return () => {
-        console.log("clear up");
-      };
+      setUser((prev) => {
+        return { ...prev, address: res.address };
+      });
     });
+    return () => {
+      console.log("clear up");
+    };
   }, []);
-  console.log("render");
   return (
     <div>
-      User Functional Components
-      <ul>
-        <li className="item">Name: {user.name}</li>
-        <li className="item">Age: {age}</li>
-        <li className="item">Localion: {user.localion}</li>
-        <li className="item">Street: {user.address.street}</li>
-        <li className="item">House: {user.address.house.house1}</li>
-        <li className="item">House: {user.address.house.house2}</li>
-      </ul>
+      <h1>User Functional Components</h1>
+      <UserContext.Provider value={{ users: user, age }}>
+        <UserInfo />
+      </UserContext.Provider>
+
       <button onClick={handleChangeAge}>change Age</button>
       <button onClick={handleChangeStreet}>change Street</button>
       <button onClick={handleChangeHouse}>change House</button>
