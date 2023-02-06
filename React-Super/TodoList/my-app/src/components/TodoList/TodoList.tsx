@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Todo } from '../@types/todo.type'
 import TaskInput from '../TaskInput/TaskInput'
 import TaskList from '../TaskList/TaskList'
@@ -9,6 +9,12 @@ function TodoList() {
   const [currentTodo, setCurrentTodo] = useState<Todo | null>(null)
   const doneTask = todo.filter((x) => x.done)
   const notDoneTask = todo.filter((x) => !x.done)
+
+  useEffect(() => {
+    let getTodoLocal = localStorage.getItem('todos')
+    let parseTodo = JSON.parse(getTodoLocal || '[]')
+    setTodo(parseTodo)
+  }, [])
   const getValueSubmitForm = (value: string) => {
     const todo = {
       name: value,
@@ -16,6 +22,10 @@ function TodoList() {
       id: new Date().toISOString()
     }
     setTodo((prev) => [...prev, todo])
+    let getTodoLocal = localStorage.getItem('todos')
+    let parseTodo = JSON.parse(getTodoLocal || '[]')
+    const todoSet = [...parseTodo, todo]
+    localStorage.setItem('todos', JSON.stringify(todoSet))
   }
 
   const handleTaskListState = (id: string, done: boolean) => {
@@ -46,15 +56,30 @@ function TodoList() {
   }
 
   const handleEditTodo = () => {
-    setTodo((prev) => {
-      return prev.map((item) => {
+    const handlelocalStr = (objTodo: Todo[]) => {
+      return objTodo.map((item) => {
         if (item.id === (currentTodo as Todo).id) {
           return currentTodo as Todo
         }
         return item
       })
-    })
+    }
     setCurrentTodo(null)
+    let getTodoLocal = localStorage.getItem('todos')
+    let parseTodo: Todo[] = JSON.parse(getTodoLocal || '[]')
+    let newTodo = handlelocalStr(parseTodo)
+    localStorage.setItem('todos', JSON.stringify(newTodo))
+    setTodo(newTodo)
+  }
+
+  const handleRemoveTodo = (id: string) => {
+    if (currentTodo) {
+      setCurrentTodo(null)
+    }
+    let indexTodo = todo.findIndex((item) => item.id === id)
+    todo.splice(indexTodo, 1)
+    const newTodo = [...todo]
+    setTodo(newTodo)
   }
 
   return (
@@ -66,12 +91,18 @@ function TodoList() {
           changeInputEdit={changeInputEdit}
           handleEditTodo={handleEditTodo}
         />
-        <TaskList todos={notDoneTask} handleTaskListState={handleTaskListState} startEditTodo={startEditTodo} />
+        <TaskList
+          todos={notDoneTask}
+          handleTaskListState={handleTaskListState}
+          startEditTodo={startEditTodo}
+          handleRemoveTodo={handleRemoveTodo}
+        />
         <TaskList
           doneTaskList
           todos={doneTask}
           handleTaskListState={handleTaskListState}
           startEditTodo={startEditTodo}
+          handleRemoveTodo={handleRemoveTodo}
         />
       </div>
     </>
