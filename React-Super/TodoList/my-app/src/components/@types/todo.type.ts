@@ -3,3 +3,6 @@ export interface Todo {
   done: boolean
   id: string
 }
+export type Title = {
+  title: string
+}

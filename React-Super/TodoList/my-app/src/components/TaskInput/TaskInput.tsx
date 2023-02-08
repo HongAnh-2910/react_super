@@ -1,17 +1,29 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import style from './taskInput.module.scss'
 import { Todo } from '../@types/todo.type'
 import PropTypes from 'prop-types'
 import { todoType } from '../@types/propTypes.type'
-import connectHOC, { typePropHOC } from '../../HOC/connectHOC'
-interface TaskInputProps extends typePropHOC {
+import { debug, showClg } from '../../constants'
+import connect from '../../HOC/connect'
+import Title from '../Title'
+interface TaskInputProps {
   getValueSubmitForm: (value: string) => void
   currentTodo: Todo | null
   changeInputEdit: (value: string) => void
   handleEditTodo: () => void
 }
-function TaskInput({ getValueSubmitForm, currentTodo, changeInputEdit, handleEditTodo, debug, clg }: TaskInputProps) {
+function TaskInput({
+  getValueSubmitForm,
+  currentTodo,
+  changeInputEdit,
+  handleEditTodo,
+  debug,
+  fucClg
+}: TaskInputProps & typeof injectProps) {
   const [name, setName] = useState<string>('')
+  const titles = useMemo(() => {
+    return { title: 'Day la tieu de' }
+  }, [])
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     if (currentTodo) {
@@ -33,10 +45,10 @@ function TaskInput({ getValueSubmitForm, currentTodo, changeInputEdit, handleEdi
       setName('')
     }
   }
-  console.log(debug, clg('hehe'))
+  console.log(debug)
   return (
     <div className={style.inputTask}>
-      <h3>To do list typescript</h3>
+      <Title titles={titles} />
       <form>
         <input
           type='text'
@@ -58,5 +70,5 @@ TaskInput.propTypes = {
   changeInputEdit: PropTypes.func.isRequired,
   handleEditTodo: PropTypes.func.isRequired
 }
-
-export default connectHOC(TaskInput)
+const injectProps = { debug: debug, fucClg: showClg }
+export default connect(injectProps)(TaskInput)

@@ -1,16 +1,18 @@
+import connect, { TypeLogProps } from '../../HOC/connect'
+import { debug } from '../../constants'
 import { todoType } from '../@types/propTypes.type'
 import { Todo } from '../@types/todo.type'
 import style from './taskList.module.scss'
 import PropTypes from 'prop-types'
 
-interface taskListProps {
+interface taskListProps extends TypeLogProps {
   doneTaskList?: Boolean
   todos: Todo[]
   handleTaskListState: (id: string, done: boolean) => void
   startEditTodo: (id: string) => void
   handleRemoveTodo: (id: string) => void
 }
-export default function TaskList(props: taskListProps) {
+function TaskList(props: taskListProps & typeof injectProps) {
   const { doneTaskList, todos, handleTaskListState, startEditTodo, handleRemoveTodo } = props
   const handleChangeCheckBox = (id: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
     handleTaskListState(id, event.target.checked)
@@ -44,8 +46,10 @@ export default function TaskList(props: taskListProps) {
 
 TaskList.propTypes = {
   doneTaskList: PropTypes.bool,
-  todos: PropTypes.arrayOf(todoType),
+  todos: PropTypes.arrayOf(todoType).isRequired,
   handleTaskListState: PropTypes.func.isRequired,
   startEditTodo: PropTypes.func.isRequired,
   handleRemoveTodo: PropTypes.func.isRequired
 }
+const injectProps = { debug: debug }
+export default connect(injectProps)(TaskList)

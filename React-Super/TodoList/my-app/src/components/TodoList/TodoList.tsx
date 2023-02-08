@@ -89,7 +89,6 @@ function TodoList() {
     setTodo(handleRemove)
     syncLocalStorage(handleRemove)
   }
-
   return (
     <>
       <div className={style.todoList}>
