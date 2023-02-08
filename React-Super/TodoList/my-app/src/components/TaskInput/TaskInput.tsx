@@ -1,18 +1,16 @@
 import { useState } from 'react'
 import style from './taskInput.module.scss'
 import { Todo } from '../@types/todo.type'
-interface TaskInputProps {
+import PropTypes from 'prop-types'
+import { todoType } from '../@types/propTypes.type'
+import connectHOC, { typePropHOC } from '../../HOC/connectHOC'
+interface TaskInputProps extends typePropHOC {
   getValueSubmitForm: (value: string) => void
   currentTodo: Todo | null
   changeInputEdit: (value: string) => void
   handleEditTodo: () => void
 }
-export default function TaskInput({
-  getValueSubmitForm,
-  currentTodo,
-  changeInputEdit,
-  handleEditTodo
-}: TaskInputProps) {
+function TaskInput({ getValueSubmitForm, currentTodo, changeInputEdit, handleEditTodo, debug, clg }: TaskInputProps) {
   const [name, setName] = useState<string>('')
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
@@ -35,6 +33,7 @@ export default function TaskInput({
       setName('')
     }
   }
+  console.log(debug, clg('hehe'))
   return (
     <div className={style.inputTask}>
       <h3>To do list typescript</h3>
@@ -52,3 +51,12 @@ export default function TaskInput({
     </div>
   )
 }
+
+TaskInput.propTypes = {
+  getValueSubmitForm: PropTypes.func.isRequired,
+  currentTodo: PropTypes.oneOfType([todoType, PropTypes.oneOf([null])]),
+  changeInputEdit: PropTypes.func.isRequired,
+  handleEditTodo: PropTypes.func.isRequired
+}
+
+export default connectHOC(TaskInput)

@@ -1,8 +1,15 @@
 import { useEffect, useState } from 'react'
 import { Todo } from '../@types/todo.type'
 import TaskInput from '../TaskInput/TaskInput'
-import TaskList from '../TaskList/TaskList'
 import style from './todoList.module.scss'
+import TaskList from '../TaskList/TaskList'
+
+const syncLocalStorage = (handle: (newTodo: Todo[]) => Todo[]) => {
+  let getTodoLocal = localStorage.getItem('todos')
+  let parseTodo = JSON.parse(getTodoLocal || '[]')
+  const todoSet = handle(parseTodo)
+  localStorage.setItem('todos', JSON.stringify(todoSet))
+}
 
 function TodoList() {
   const [todo, setTodo] = useState<Todo[]>([])
@@ -22,10 +29,11 @@ function TodoList() {
       id: new Date().toISOString()
     }
     setTodo((prev) => [...prev, todo])
-    let getTodoLocal = localStorage.getItem('todos')
-    let parseTodo = JSON.parse(getTodoLocal || '[]')
-    const todoSet = [...parseTodo, todo]
-    localStorage.setItem('todos', JSON.stringify(todoSet))
+    const handle = (newTodo: Todo[]) => {
+      return [...newTodo, todo]
+    }
+
+    syncLocalStorage(handle)
   }
 
   const handleTaskListState = (id: string, done: boolean) => {
@@ -65,21 +73,21 @@ function TodoList() {
       })
     }
     setCurrentTodo(null)
-    let getTodoLocal = localStorage.getItem('todos')
-    let parseTodo: Todo[] = JSON.parse(getTodoLocal || '[]')
-    let newTodo = handlelocalStr(parseTodo)
-    localStorage.setItem('todos', JSON.stringify(newTodo))
-    setTodo(newTodo)
+    setTodo(handlelocalStr)
+    syncLocalStorage(handlelocalStr)
   }
 
   const handleRemoveTodo = (id: string) => {
     if (currentTodo) {
       setCurrentTodo(null)
     }
-    let indexTodo = todo.findIndex((item) => item.id === id)
-    todo.splice(indexTodo, 1)
-    const newTodo = [...todo]
-    setTodo(newTodo)
+    const handleRemove = (objTodo: Todo[]) => {
+      let indexTodo = objTodo.findIndex((item) => item.id === id)
+      objTodo.splice(indexTodo, 1)
+      return [...objTodo]
+    }
+    setTodo(handleRemove)
+    syncLocalStorage(handleRemove)
   }
 
   return (
