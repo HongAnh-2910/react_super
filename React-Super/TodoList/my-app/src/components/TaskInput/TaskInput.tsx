@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import style from './taskInput.module.scss'
 import { Todo } from '../@types/todo.type'
 import PropTypes from 'prop-types'
@@ -21,6 +21,7 @@ function TaskInput({
   fucClg
 }: TaskInputProps & typeof injectProps) {
   const [name, setName] = useState<string>('')
+  const [number, setNumber] = useState<number>(0)
   const titles = useMemo(() => {
     return { title: 'Day la tieu de' }
   }, [])
@@ -45,10 +46,13 @@ function TaskInput({
       setName('')
     }
   }
-  console.log(debug)
+
+  const handleClickTitle = useCallback((value: any) => {
+    setNumber((prev) => prev + value)
+  }, [])
   return (
     <div className={style.inputTask}>
-      <Title titles={titles} />
+      <Title titles={titles} handleClickTitle={handleClickTitle} number={number} />
       <form>
         <input
           type='text'

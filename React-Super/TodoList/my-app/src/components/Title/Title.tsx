@@ -4,11 +4,17 @@ type TtileProps = {
   titles: {
     title: string
   }
+  handleClickTitle: (value: any) => void
+  number: number
 }
 
-function Title({ titles }: TtileProps) {
+function Title({ titles, handleClickTitle, number }: TtileProps) {
   console.log('component con render')
-  return <h3>{titles.title}</h3>
+  return (
+    <h3 onClick={() => handleClickTitle(100)}>
+      {titles.title} - {number}
+    </h3>
+  )
 }
 
 // function areEqual(prevProps: TtileProps, nextProps: TtileProps) {
