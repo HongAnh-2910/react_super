@@ -1,3 +1,4 @@
+import AutoInput from './components/AutoInput/AutoInput'
 import ContextWelcome from './components/ContextWelcome/ContextWelcome'
 import Count from './components/Count'
 import CountAge from './components/Reducer'
@@ -9,7 +10,8 @@ function App() {
       {/* <TodoList /> */}
       {/* <Count /> */}
       {/* <CountAge /> */}
-      <ContextWelcome />
+      {/* <ContextWelcome /> */}
+      <AutoInput />
     </div>
   )
 }

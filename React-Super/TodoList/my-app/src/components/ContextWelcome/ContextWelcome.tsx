@@ -1,23 +1,50 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useId, useMemo, useReducer, useState } from 'react'
 import styles from './cssWelcome.module.scss'
 
+const CONST_ACTION = {
+  handle_click_set_color_Action: 'handle_click_set_color_Action'
+}
 interface StateType {
   color: 'light' | 'dark'
 }
+
+const initStateColor: StateType = { color: 'light' }
 const valueContext = React.createContext(null as any)
+
+function handleClickSetColorAction(payload: StateType['color']) {
+  return { type: CONST_ACTION.handle_click_set_color_Action, payload: payload } as {
+    type: 'handle_click_set_color_Action'
+    payload: StateType['color']
+  }
+}
+
+function reducer(
+  state: typeof initStateColor,
+  action: {
+    type: 'handle_click_set_color_Action'
+    payload: StateType['color']
+  }
+) {
+  switch (action.type) {
+    case CONST_ACTION.handle_click_set_color_Action:
+      return { ...state, color: action.payload }
+
+    default:
+      throw new Error('Unknown action: ' + action)
+  }
+}
+
 function ContextWelcome() {
-  const [theme, setTheme] = useState<StateType>({ color: 'light' })
+  const [state, dispatch] = useReducer(reducer, initStateColor)
   const [, renderState] = useState({})
 
   const handleClickSetColor = useCallback((status: 'light' | 'dark') => {
-    setTheme((prev) => {
-      return { ...prev, color: status }
-    })
+    dispatch(handleClickSetColorAction(status))
   }, [])
 
   const valueContex = useMemo(() => {
-    return { theme, handleClickSetColor }
-  }, [theme, handleClickSetColor])
+    return { state, handleClickSetColor }
+  }, [state, handleClickSetColor])
 
   const handleRender = () => {
     renderState({})
@@ -37,7 +64,8 @@ function ContextWelcome() {
 }
 
 const Label = React.memo(function () {
-  const { theme, handleClickSetColor } = useContext(valueContext)
+  const { state, handleClickSetColor } = useContext(valueContext)
+  const id = useId()
   const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       handleClickSetColor('dark')
@@ -46,16 +74,17 @@ const Label = React.memo(function () {
     }
   }
   return (
-    <label>
-      <input type='checkbox' checked={theme.color === 'dark'} onChange={handleChecked} /> Use dark mode
-    </label>
+    <>
+      <input id={id} type='checkbox' checked={state.color === 'dark'} onChange={handleChecked} />
+      <label htmlFor={id}>Use dark mode</label>
+    </>
   )
 })
 
 function Form() {
-  const { theme } = useContext(valueContext)
+  const { state } = useContext(valueContext)
   return (
-    <div className={`${styles.wrapperForm}  ${theme.color === 'light' ? styles.bgclickLight : styles.bgclickDark}`}>
+    <div className={`${styles.wrapperForm}  ${state.color === 'light' ? styles.bgclickLight : styles.bgclickDark}`}>
       <Button status='dark'>Dark</Button>
       <Button status='light'>Light</Button>
     </div>
