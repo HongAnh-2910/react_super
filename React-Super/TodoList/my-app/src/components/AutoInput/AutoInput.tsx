@@ -1,8 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
+import React, { useImperativeHandle, useRef, useState } from 'react'
 
 export default function AutoInput() {
+  const refFocus = useRef<{
+    type: () => void
+    currrentRef: { current: HTMLInputElement | null }
+  }>({
+    type: () => {},
+    currrentRef: { current: null }
+  })
   const handleAutoInput = () => {
-    console.log('123')
+    refFocus.current.type()
+    refFocus.current.currrentRef.current?.focus()
   }
   return (
     <div>
@@ -10,7 +18,7 @@ export default function AutoInput() {
       <button onClick={handleAutoInput} style={{ display: 'block' }}>
         Click change autoInput
       </button>
-      <Input>input auto</Input>
+      <Input ref={refFocus}>input auto</Input>
     </div>
   )
 }
@@ -19,13 +27,18 @@ interface InputProp {
   children: string
 }
 
-function Input({ children }: InputProp) {
+const Input = React.forwardRef(function ({ children }: InputProp, ref) {
   const currrentRef = useRef<HTMLInputElement>(null)
   const [value, setValue] = useState('')
-  useEffect(() => {
+  useImperativeHandle(ref, () => {
+    return {
+      type,
+      currrentRef
+    }
+  })
+  function type() {
     let currentIndex = 0
     let name = 'Nguyễn Văn A'
-    currrentRef.current?.focus()
     let intavel = setInterval(() => {
       setValue(name.slice(0, currentIndex))
       if (name.length === currentIndex) {
@@ -33,8 +46,7 @@ function Input({ children }: InputProp) {
       }
       currentIndex++
     }, 100)
-  }, [])
-  console.log('123')
+  }
   return (
     <input
       onChange={(event) => setValue(event.target.value)}
@@ -45,4 +57,4 @@ function Input({ children }: InputProp) {
       value={value}
     />
   )
-}
+})

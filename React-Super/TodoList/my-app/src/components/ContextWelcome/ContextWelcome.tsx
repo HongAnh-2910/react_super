@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useId, useMemo, useReducer, useState } from 'react'
+import React, { useCallback, useContext, useDebugValue, useId, useMemo, useReducer, useState } from 'react'
 import styles from './cssWelcome.module.scss'
 
 const CONST_ACTION = {
@@ -34,13 +34,23 @@ function reducer(
   }
 }
 
-function ContextWelcome() {
+const useCustomerWelCome = () => {
   const [state, dispatch] = useReducer(reducer, initStateColor)
   const [, renderState] = useState({})
 
   const handleClickSetColor = useCallback((status: 'light' | 'dark') => {
     dispatch(handleClickSetColorAction(status))
   }, [])
+  useDebugValue(state.color === 'light' ? 'hehelight' : 'âadark')
+  return {
+    state,
+    handleClickSetColor,
+    renderState
+  }
+}
+
+function ContextWelcome() {
+  const { state, handleClickSetColor, renderState } = useCustomerWelCome()
 
   const valueContex = useMemo(() => {
     return { state, handleClickSetColor }

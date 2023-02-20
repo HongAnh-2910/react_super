@@ -10,8 +10,8 @@ function App() {
       {/* <TodoList /> */}
       {/* <Count /> */}
       {/* <CountAge /> */}
-      {/* <ContextWelcome /> */}
-      <AutoInput />
+      <ContextWelcome />
+      {/* <AutoInput /> */}
     </div>
   )
 }
