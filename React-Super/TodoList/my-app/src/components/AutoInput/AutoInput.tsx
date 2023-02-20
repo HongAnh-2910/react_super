@@ -1,16 +1,9 @@
 import React, { useImperativeHandle, useRef, useState } from 'react'
 
 export default function AutoInput() {
-  const refFocus = useRef<{
-    type: () => void
-    currrentRef: { current: HTMLInputElement | null }
-  }>({
-    type: () => {},
-    currrentRef: { current: null }
-  })
+  const refGetValue = useRef<{ type: () => void }>({ type: () => {} })
   const handleAutoInput = () => {
-    refFocus.current.type()
-    refFocus.current.currrentRef.current?.focus()
+    refGetValue.current.type()
   }
   return (
     <div>
@@ -18,7 +11,7 @@ export default function AutoInput() {
       <button onClick={handleAutoInput} style={{ display: 'block' }}>
         Click change autoInput
       </button>
-      <Input ref={refFocus}>input auto</Input>
+      <Input ref={refGetValue}>input auto</Input>
     </div>
   )
 }
@@ -32,8 +25,7 @@ const Input = React.forwardRef(function ({ children }: InputProp, ref) {
   const [value, setValue] = useState('')
   useImperativeHandle(ref, () => {
     return {
-      type,
-      currrentRef
+      type
     }
   })
   function type() {
