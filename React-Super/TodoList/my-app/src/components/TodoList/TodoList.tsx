@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react'
+import { useCallback, useEffect, useReducer } from 'react'
 import { Todo } from '../@types/todo.type'
 import TaskInput from '../TaskInput/TaskInput'
 import style from './todoList.module.scss'
@@ -30,7 +30,7 @@ function TodoList() {
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(state.todos))
   }, [state.todos])
-  const getValueSubmitForm = (value: string) => {
+  const getValueSubmitForm = useCallback((value: string) => {
     const todo = {
       name: value,
       done: false,
@@ -42,30 +42,34 @@ function TodoList() {
     }
 
     syncLocalStorage(handle)
-  }
+  }, [])
 
-  const handleTaskListState = (id: string, done: boolean) => {
+  const handleTaskListState = useCallback((id: string, done: boolean) => {
     dispatch(handleTaskListStateAcion({ id, done }))
-  }
+  }, [])
 
-  const startEditTodo = (id: string) => {
-    const filterTodoById = state.todos.find((x) => x.id === id)
-    if (filterTodoById) {
-      dispatch(startEditTodoAction(filterTodoById))
-    }
-  }
+  const startEditTodo = useCallback(
+    (id: string) => {
+      console.log(state.todos)
+      const filterTodoById = state.todos.find((x) => x.id === id)
+      if (filterTodoById) {
+        dispatch(startEditTodoAction(filterTodoById))
+      }
+    },
+    [state]
+  )
 
-  const changeInputEdit = (name: string) => {
+  const changeInputEdit = useCallback((name: string) => {
     dispatch(changeInputEditAction(name))
-  }
+  }, [])
 
-  const handleEditTodo = () => {
+  const handleEditTodo = useCallback(() => {
     dispatch(handleEditTodoAction())
-  }
+  }, [])
 
-  const handleRemoveTodo = (id: string) => {
+  const handleRemoveTodo = useCallback((id: string) => {
     dispatch(handleRemoveTodoAction(id))
-  }
+  }, [])
   return (
     <>
       <div className={style.todoList}>

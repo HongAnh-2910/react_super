@@ -31,7 +31,6 @@ const Input = React.forwardRef(function ({ children }: InputProp, ref) {
   function type() {
     let currentIndex = 0
     let name = 'Nguyễn Văn A'
-    currrentRef.current?.focus()
     let intavel = setInterval(() => {
       setValue(name.slice(0, currentIndex))
       if (name.length === currentIndex) {
