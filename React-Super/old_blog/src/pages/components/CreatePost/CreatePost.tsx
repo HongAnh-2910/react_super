@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import PostType from '../../../types/post.type'
-import { useDispatch, useSelector } from 'react-redux'
-import { addPostAction, cancelEditAction, editAction } from '../../post.reducer'
-import { RootState } from '../../../store'
+import { useSelector } from 'react-redux'
+import { addPost, cancelEditAction, editPost } from '../../post.reducer'
+import { RootState, useAppDispatch } from '../../../store'
 const initFormData = {
   title: '',
   description: '',
@@ -17,15 +17,17 @@ export default function CreatePost() {
   useEffect(() => {
     setFormData(postEdit || initFormData)
   }, [postEdit])
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const handleSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (postEdit) {
-      dispatch(editAction(formData))
+      dispatch(editPost(formData))
       dispatch(cancelEditAction())
     } else {
-      const newAddId = { ...formData, id: new Date().toISOString() }
-      dispatch(addPostAction(newAddId))
+      const newAddId = { ...formData }
+      // dispatch(addPostAction(newAddId))
+      dispatch(addPost(newAddId))
+      setFormData(initFormData)
     }
   }
 
