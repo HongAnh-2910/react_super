@@ -5,7 +5,7 @@ class Http {
   constructor() {
     this.instance = axios.create({
       baseURL: 'http://localhost:3004/',
-      timeout: 1000
+      timeout: 4000
     })
 
     // Thêm một bộ đón chặn request

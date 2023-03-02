@@ -1,16 +1,28 @@
-import { PayloadAction, createSlice, nanoid, createAsyncThunk } from '@reduxjs/toolkit'
+import { PayloadAction, createSlice, nanoid, createAsyncThunk, AsyncThunk } from '@reduxjs/toolkit'
 import PostType from '../types/post.type'
 import http from '../utils/http.post'
 
 interface PostList {
   postList: PostType[]
   editStartPost: PostType | null
+  isLoading: boolean
+  requestId: null | string
+  isLoadingCreate: boolean
 }
 
 const initState: PostList = {
   postList: [],
-  editStartPost: null
+  editStartPost: null,
+  isLoading: false,
+  requestId: null,
+  isLoadingCreate: false
 }
+
+type GenericAsyncThunk = AsyncThunk<unknown, unknown, any>
+
+type PendingAction = ReturnType<GenericAsyncThunk['pending']>
+type RejectedAction = ReturnType<GenericAsyncThunk['rejected']>
+type FulfilledAction = ReturnType<GenericAsyncThunk['fulfilled']>
 
 export const getListPost = createAsyncThunk('post/get_posts_success', async (_, thunkAPI) => {
   const response = await http.get<PostType[]>('posts', {
@@ -20,10 +32,14 @@ export const getListPost = createAsyncThunk('post/get_posts_success', async (_, 
 })
 
 export const addPost = createAsyncThunk('post/add_post', async (post: Omit<PostType, 'id'>, thunkAPI) => {
-  const response = await http.post<PostType>('posts', post, {
-    signal: thunkAPI.signal
-  })
-  return response.data
+  try {
+    const response = await http.post<PostType>('posts', post, {
+      signal: thunkAPI.signal
+    })
+    return response.data
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error.response.data)
+  }
 })
 
 export const startEditPost = createAsyncThunk('post/start_edit_post', async (id: string, thunkAPI) => {
@@ -34,17 +50,21 @@ export const startEditPost = createAsyncThunk('post/start_edit_post', async (id:
 })
 
 export const editPost = createAsyncThunk('post/edit', async (body: PostType, thunkAPI) => {
-  const response = await http.put(`posts/${body.id}`, body, {
-    signal: thunkAPI.signal
-  })
-  return response.data
+  try {
+    const response = await http.put(`posts/${body.id}`, body, {
+      signal: thunkAPI.signal
+    })
+    return response.data
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error.response.data)
+  }
 })
 
 export const removePost = createAsyncThunk('post/remove', async (id: string, thunkAPI) => {
-  await http.delete(`posts/${id}`, {
+  const response = await http.delete(`posts/${id}`, {
     signal: thunkAPI.signal
   })
-  return id
+  return response
 })
 
 const postReducer = createSlice({
@@ -99,15 +119,42 @@ const postReducer = createSlice({
       state.postList[index] = action.payload
     })
     builder.addCase(removePost.fulfilled, (state, action) => {
-      let indexId = state.postList.findIndex((x) => x.id === action.payload)
+      let idPost = action.meta.arg
+      let indexId = state.postList.findIndex((x) => x.id === idPost)
       if (indexId !== -1) {
         state.postList.splice(indexId, 1)
       }
     })
     builder.addMatcher(
-      (action) => action.type.includes('cancel'),
+      (action): action is PendingAction => action.type.endsWith('/get_posts_success/pending'),
       (state, action) => {
-        console.log(state.postList)
+        state.isLoading = true
+        state.requestId = action.meta.requestId
+      }
+    )
+    builder.addMatcher(
+      (action): action is RejectedAction | FulfilledAction =>
+        action.type.endsWith('/get_posts_success/rejected') || action.type.endsWith('/get_posts_success/fulfilled'),
+      (state, action) => {
+        if (state.isLoading === true && state.requestId === action.meta.requestId) {
+          state.isLoading = false
+        }
+      }
+    )
+    builder.addMatcher(
+      (action): action is PendingAction => action.type.endsWith('/start_edit_post/pending'),
+      (state, action) => {
+        state.isLoadingCreate = true
+        state.requestId = action.meta.requestId
+      }
+    )
+    builder.addMatcher(
+      (action): action is RejectedAction | FulfilledAction =>
+        action.type.endsWith('/start_edit_post/rejected') || action.type.endsWith('/start_edit_post/fulfilled'),
+      (state, action) => {
+        if (state.isLoadingCreate === true && state.requestId === action.meta.requestId) {
+          state.isLoadingCreate = false
+        }
       }
     )
   }

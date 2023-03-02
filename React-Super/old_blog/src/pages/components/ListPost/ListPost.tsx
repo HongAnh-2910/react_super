@@ -3,9 +3,11 @@ import ItemPost from '../ItemPost'
 import { RootState, useAppDispatch } from '../../../store'
 import { getListPost, removePost, startEditPost } from '../../post.reducer'
 import { useEffect } from 'react'
+import Loading from '../loading'
 
 export default function ListPost() {
   const postList = useSelector((state: RootState) => state.post.postList)
+  const isLoading = useSelector((state: RootState) => state.post.isLoading)
   const disphatch = useAppDispatch()
   const handleDelete = (postId: string) => {
     disphatch(removePost(postId))
@@ -32,9 +34,18 @@ export default function ListPost() {
             </p>
           </div>
           <div className='grid gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-2 xl:grid-cols-2 xl:gap-8'>
-            {postList.map((item) => (
-              <ItemPost handleStartEdit={handleStartEdit} handleDelete={handleDelete} key={item.id} post={item} />
-            ))}
+            {isLoading && (
+              <>
+                <Loading />
+                <Loading />
+                <Loading />
+                <Loading />
+              </>
+            )}
+            {!isLoading &&
+              postList.map((item) => (
+                <ItemPost handleStartEdit={handleStartEdit} handleDelete={handleDelete} key={item.id} post={item} />
+              ))}
           </div>
         </div>
       </div>
