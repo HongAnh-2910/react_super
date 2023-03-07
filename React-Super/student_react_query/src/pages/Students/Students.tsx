@@ -1,26 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { TypeStudents } from 'types/typeStudent'
 import { getStudents } from 'utils/callApiStudent/apiGetStudents'
-
+import useCustomerQuerySting from 'utils/useCustomerQuerySting'
 export default function Students() {
-  const [students, setStudents] = useState<TypeStudents | []>([])
-  const [loading, setLoading] = useState<true | false>(true)
-  useEffect(() => {
-    const controller = new AbortController()
-
-    getStudents(1, 10, controller.signal)
-      .then((res) => setStudents(res.data))
-      .finally(() => setLoading(false))
-      .catch((error) => {
-        console.log('Errror', error)
-      })
-  }, [])
-  console.log(loading)
+  const { _page, _limit } = useCustomerQuerySting()
+  const page: number | 1 = Number(_page) || 1
+  const { isLoading, data } = useQuery({
+    queryKey: ['students', page],
+    queryFn: () => getStudents(page, _limit)
+  })
+  const totalPage = data?.headers['x-total-count']
+  console.log(Array(5))
   return (
     <div>
       <h1 className='text-lg'>Students</h1>
-      {loading && (
+      {isLoading && (
         <div role='status' className='mt-6 animate-pulse'>
           <div className='mb-4 h-4  rounded bg-gray-200 dark:bg-gray-700' />
           <div className='mb-2.5 h-10  rounded bg-gray-200 dark:bg-gray-700' />
@@ -38,7 +32,7 @@ export default function Students() {
           <span className='sr-only'>Loading...</span>
         </div>
       )}
-      {!loading && (
+      {!isLoading && (
         <>
           <div className='relative mt-6 overflow-x-auto shadow-md sm:rounded-lg'>
             <table className='w-full text-left text-sm text-gray-500 dark:text-gray-400'>
@@ -62,12 +56,12 @@ export default function Students() {
                 </tr>
               </thead>
               <tbody>
-                {students.map((item) => (
+                {data?.data.map((item) => (
                   <tr
                     key={item.id}
                     className='border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600'
                   >
-                    <td className='py-4 px-6'>1</td>
+                    <td className='py-4 px-6'>{item.id}</td>
                     <td className='py-4 px-6'>
                       <img src={item.avatar} alt='student' className='h-5 w-5' />
                     </td>
