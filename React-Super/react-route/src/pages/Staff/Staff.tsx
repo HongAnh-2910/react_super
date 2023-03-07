@@ -1,5 +1,11 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { idDefault } from 'App'
+import AddStaff from 'components/AddStaff'
+import StaffItem from 'components/StaffItem'
+import StaffList from 'components/StaffList'
+import { useContext } from 'react'
+import { NavLink, Outlet, Route, Routes } from 'react-router-dom'
 export default function Staff() {
+  const { idActive } = useContext(idDefault)
   return (
     <div>
       <h1 className='mb-6 text-lg'>Staff List</h1>
@@ -7,12 +13,13 @@ export default function Staff() {
         <ul className='-mb-px flex flex-wrap'>
           <li className='mr-2'>
             <NavLink
-              to={'/staff'}
               end
+              to={'/staff'}
               className={({ isActive }) => {
-                let active = isActive
-                  ? 'active rounded-t-lg border-b-2 border-blue-600 p-4 text-blue-600'
-                  : ' hover:border-gray-300 hover:text-gray-600'
+                let active =
+                  isActive || idActive
+                    ? 'active rounded-t-lg border-b-2 border-blue-600 p-4 text-blue-600'
+                    : ' hover:border-gray-300 hover:text-gray-600'
                 return `${active} inline-block rounded-t-lg border-b-2 border-transparent p-4 `
               }}
             >
@@ -35,7 +42,13 @@ export default function Staff() {
           </li>
         </ul>
       </div>
-      <Outlet />
+      <Routes>
+        <Route path=':id' element={<StaffItem />} />
+        <Route path='add' element={<AddStaff />} />
+        <Route index element={<StaffList />} />
+      </Routes>
+
+      {/* <Outlet /> */}
       {/* <AddStaff /> */}
     </div>
   )
