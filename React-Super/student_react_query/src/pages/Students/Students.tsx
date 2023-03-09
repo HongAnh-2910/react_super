@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { getStudents } from 'utils/callApiStudent/apiGetStudents'
 import useCustomerQuerySting from 'utils/useCustomerQuerySting'
@@ -9,11 +9,13 @@ export default function Students() {
   const page: number | 1 = Number(_page) || 1
   const { isLoading, data } = useQuery({
     queryKey: ['students', page],
-    queryFn: () => getStudents(page, LIMIT)
+    queryFn: () => getStudents(page, LIMIT),
+    staleTime: 1 * 1000,
+    cacheTime: 10 * 1000
   })
   const totalRow = data?.headers['x-total-count']
   const totalPage = Math.ceil(Number(totalRow || 0) / LIMIT)
-
+  const handleDelete = (id: string | number) => {}
   return (
     <div>
       <h1 className='text-lg'>Students</h1>
@@ -79,7 +81,9 @@ export default function Students() {
                       >
                         Edit
                       </Link>
-                      <button className='font-medium text-red-600 dark:text-red-500'>Delete</button>
+                      <button onClick={handleDelete(item.id)} className='font-medium text-red-600 dark:text-red-500'>
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}
