@@ -9,7 +9,10 @@ export default function Students() {
   const page: number | 1 = Number(_page) || 1
   const { isLoading, data } = useQuery({
     queryKey: ['students', page],
-    queryFn: () => getStudents(page, LIMIT)
+    queryFn: () => getStudents(page, LIMIT),
+    staleTime: 10 * 1000,
+    cacheTime: 3 * 60 * 1000,
+    keepPreviousData: true
   })
   const totalRow = data?.headers['x-total-count']
   const totalPage = Math.ceil(Number(totalRow || 0) / LIMIT)
@@ -17,6 +20,13 @@ export default function Students() {
   return (
     <div>
       <h1 className='text-lg'>Students</h1>
+      <Link
+        to={`add`}
+        type='button'
+        className='mr-2 mb-2 mt-4 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gradient-to-bl focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800'
+      >
+        Thêm mới
+      </Link>
       {isLoading && (
         <div role='status' className='mt-6 animate-pulse'>
           <div className='mb-4 h-4  rounded bg-gray-200 dark:bg-gray-700' />
@@ -74,7 +84,7 @@ export default function Students() {
                     <td className='py-4 px-6'>{item.email}</td>
                     <td className='py-4 px-6 text-right'>
                       <Link
-                        to='/students/1'
+                        to={`/students/${item.id}`}
                         className='mr-5 font-medium text-blue-600 hover:underline dark:text-blue-500'
                       >
                         Edit
