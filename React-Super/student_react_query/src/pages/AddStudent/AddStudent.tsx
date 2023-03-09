@@ -1,5 +1,5 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect, useMemo, useState } from 'react'
 import { useMatch, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { TypeStudent } from 'types/typeStudent'
@@ -23,13 +23,14 @@ type TypeError = {
 export default function AddStudent() {
   const checkUrl = useMatch('students/add')
   const { id } = useParams()
+  const queryClient = useQueryClient()
 
   const [dataForm, setDataForm] = useState<TypeFormData>(initFormData)
   const addMutation = useMutation({
     mutationFn: (body: TypeFormData) => addStudent(body)
   })
 
-  useQuery({
+  const dataGetStudent = useQuery({
     queryKey: ['student', id],
     queryFn: () => getStudent(id as string),
     onSuccess: ({ data }) => {
@@ -38,8 +39,17 @@ export default function AddStudent() {
     enabled: !!id
   })
 
+  useEffect(() => {
+    if (dataGetStudent.data) {
+      setDataForm(dataGetStudent.data.data)
+    }
+  }, [dataGetStudent.data])
+
   const updateMutation = useMutation({
-    mutationFn: (body: TypeFormData) => updateStudent(id as string, body)
+    mutationFn: (body: TypeFormData) => updateStudent(id as string, body),
+    onSuccess: (data) => {
+      queryClient.setQueryData(['student', id], data)
+    }
   })
 
   const handleChange = (name: keyof TypeFormData) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,7 +97,7 @@ export default function AddStudent() {
       <form className='mt-6' onSubmit={handleSubmit}>
         <div className='group relative z-0 mb-6 w-full'>
           <input
-            type='email'
+            type='text'
             name='floating_email'
             id='floating_email'
             className='peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-2.5 px-0 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500'

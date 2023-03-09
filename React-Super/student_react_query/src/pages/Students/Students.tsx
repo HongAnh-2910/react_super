@@ -1,11 +1,13 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { getStudents } from 'utils/callApiStudent/apiGetStudents'
+import { deleteStudent, getStudent, getStudents } from 'utils/callApiStudent/apiGetStudents'
 import useCustomerQuerySting from 'utils/useCustomerQuerySting'
 import classNames from 'classnames'
+import { toast } from 'react-toastify'
 const LIMIT = 10
 export default function Students() {
   const { _page } = useCustomerQuerySting()
+  const queryClient = useQueryClient()
   const page: number | 1 = Number(_page) || 1
   const { isLoading, data } = useQuery({
     queryKey: ['students', page],
@@ -14,9 +16,32 @@ export default function Students() {
     cacheTime: 3 * 60 * 1000,
     keepPreviousData: true
   })
+  const deleteRow = useMutation({
+    mutationFn: (id: string | number) => deleteStudent(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['students', page],
+        exact: true
+      })
+    }
+  })
   const totalRow = data?.headers['x-total-count']
   const totalPage = Math.ceil(Number(totalRow || 0) / LIMIT)
-  const handleDelete = (id: string | number) => {}
+  const handleDelete = (id: string | number) => {
+    deleteRow.mutate(id, {
+      onSuccess: () => {
+        toast.success('Delete Success')
+        // refetch()
+      }
+    })
+  }
+  const handleMouseEnter = async (id: string | number) => {
+    await queryClient.prefetchQuery({
+      queryKey: ['student', String(id)],
+      queryFn: () => getStudent(id),
+      staleTime: 10 * 1000
+    })
+  }
   return (
     <div>
       <h1 className='text-lg'>Students</h1>
@@ -71,6 +96,7 @@ export default function Students() {
               <tbody>
                 {data?.data.map((item) => (
                   <tr
+                    onMouseEnter={() => handleMouseEnter(item.id)}
                     key={item.id}
                     className='border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600'
                   >
@@ -89,7 +115,10 @@ export default function Students() {
                       >
                         Edit
                       </Link>
-                      <button onClick={handleDelete(item.id)} className='font-medium text-red-600 dark:text-red-500'>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className='font-medium text-red-600 dark:text-red-500'
+                      >
                         Delete
                       </button>
                     </td>

@@ -17,3 +17,5 @@ export const getStudent = (id: string | number) => http.get<TypeStudent>(`studen
 
 export const updateStudent = (id: string | number, body: Omit<TypeStudent, 'id'>) =>
   http.put<TypeStudent>(`students/${id}`, body)
+
+export const deleteStudent = (id: string | number) => http.delete<{}>(`students/${id}`)
