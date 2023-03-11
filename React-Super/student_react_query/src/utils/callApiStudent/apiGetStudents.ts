@@ -1,12 +1,13 @@
 import { TypeStudent, TypeStudents } from 'types/typeStudent'
 import http from 'utils/axios/Http'
 
-export const getStudents = (page: number | string, limit: number | string) => {
+export const getStudents = (page: number | string, limit: number | string, signal?: AbortSignal) => {
   let response = http.get<TypeStudents>('students', {
     params: {
       _page: page,
       _limit: limit
-    }
+    },
+    signal
   })
   return response
 }

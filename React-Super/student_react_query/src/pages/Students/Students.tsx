@@ -11,7 +11,7 @@ export default function Students() {
   const page: number | 1 = Number(_page) || 1
   const { isLoading, data } = useQuery({
     queryKey: ['students', page],
-    queryFn: () => getStudents(page, LIMIT),
+    queryFn: ({ signal }) => getStudents(page, LIMIT, signal),
     staleTime: 10 * 1000,
     cacheTime: 3 * 60 * 1000,
     keepPreviousData: true
@@ -42,16 +42,53 @@ export default function Students() {
       staleTime: 10 * 1000
     })
   }
+  const handleFetchApi10 = () => {
+    const id = '7'
+    queryClient.prefetchQuery({
+      queryKey: ['student', String(id)],
+      queryFn: () => getStudent(id),
+      staleTime: 10 * 1000
+    })
+  }
+
+  const handleFetchApi10s = () => {
+    const id = '7'
+    queryClient.prefetchQuery({
+      queryKey: ['student', String(id)],
+      queryFn: () => getStudent(id),
+      staleTime: 3 * 1000
+    })
+  }
+
+  const cancelFetchApi = () => {
+    queryClient.cancelQueries({ queryKey: ['students', page], exact: true })
+  }
+
   return (
     <div>
       <h1 className='text-lg'>Students</h1>
       <Link
         to={`add`}
         type='button'
-        className='mr-2 mb-2 mt-4 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gradient-to-bl focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800'
+        className='mb-2 mt-4 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gradient-to-bl focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800'
       >
         Thêm mới
       </Link>
+      <button
+        className=' mx-4 rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700'
+        onClick={handleFetchApi10}
+      >
+        Click 10s
+      </button>
+      <button
+        onClick={handleFetchApi10s}
+        className='rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700'
+      >
+        Click 10s
+      </button>
+      <button onClick={cancelFetchApi} className='rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700'>
+        Cancel Api
+      </button>
       {isLoading && (
         <div role='status' className='mt-6 animate-pulse'>
           <div className='mb-4 h-4  rounded bg-gray-200 dark:bg-gray-700' />
