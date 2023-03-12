@@ -73,7 +73,6 @@ export default function AddStudent() {
           toast.success('Update thành công')
         }
       })
-      console.log(dataForm)
     } else {
       event.preventDefault()
       addMutation.mutate(dataForm, {
