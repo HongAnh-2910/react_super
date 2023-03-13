@@ -19,7 +19,7 @@ export default function Login() {
   return (
     <div>
       <div className='bg-ordens'>
-        <div className='m-auto max-w-7xl p-3'>
+        <div className='container_customer'>
           <div className='grid grid-cols-1 lg:grid-cols-5'>
             <div className='lg:col-span-2 lg:col-start-4'>
               <form className='rounded-sm bg-white p-10' onSubmit={onsubmit} noValidate>

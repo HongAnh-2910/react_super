@@ -1,5 +1,8 @@
 import type { RegisterOptions, UseFormGetValues } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
 type Rules = { [key in 'email' | 'password' | 'password_confirm']: RegisterOptions }
+type Rules2 = { [key in 'email' | 'password' | 'password_confirm']: ObjectSchema }
+
 const rules = (getValues?: UseFormGetValues<any>): Rules => ({
   email: {
     required: {
@@ -50,5 +53,9 @@ const rules = (getValues?: UseFormGetValues<any>): Rules => ({
     validate:
       typeof getValues === 'function' ? (value) => value === getValues('password') || 'Mật khẩu không khớp' : undefined
   }
+})
+import * as yup from 'yup'
+const rulesYup = yup.object({
+  email: yup.string().oneOf(['is_mail'], 'sdasda')
 })
 export default rules

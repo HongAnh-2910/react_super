@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import rules from 'src/utils/rules'
+import Input from 'src/components/Input'
 
 interface FormType {
   email: string
@@ -22,40 +23,43 @@ export default function Register() {
   return (
     <div>
       <div className='bg-ordens'>
-        <div className='m-auto max-w-7xl p-4'>
+        <div className='container_customer'>
           <div className='grid grid-cols-1 lg:grid-cols-5'>
             <div className='lg:col-span-2 lg:col-start-4'>
               <form className='rounded-sm bg-white p-10' onSubmit={onsubmit} noValidate>
                 <div className='text-2xl'>Đăng ký</div>
-                <div className='mt-8'>
-                  <input
-                    type='email'
-                    placeholder='Email'
-                    {...register('email', rule.email)}
-                    className='w-full rounded-sm border border-gray-300 p-3 outline-none focus:border-gray-500'
-                  />
-                  <div className='mt-1 min-h-[1.25rem] text-red-500'>{errors.email?.message}</div>
-                </div>
-                <div className='mt-2'>
-                  <input
-                    type='password'
-                    placeholder='Mật khẩu'
-                    autoComplete='on'
-                    {...register('password', rule.password)}
-                    className='w-full rounded-sm border border-gray-300 p-3 outline-none focus:border-gray-500'
-                  />
-                  <div className='mt-1 min-h-[1.25rem] text-red-500'>{errors.password?.message}</div>
-                </div>
-                <div className='mt-2'>
-                  <input
-                    type='password'
-                    autoComplete='on'
-                    {...register('confirm_password', rule.password_confirm)}
-                    placeholder='Nhập lại mật khẩu'
-                    className='w-full rounded-sm border border-gray-300 p-3 outline-none focus:border-gray-500'
-                  />
-                  <div className='mt-1 min-h-[1.25rem] text-red-500'>{errors.confirm_password?.message}</div>
-                </div>
+                <Input
+                  name='email'
+                  register={register}
+                  rule={rule.email}
+                  autoComplete='on'
+                  className='mt-8'
+                  errorMessage={errors.email?.message}
+                  type='email'
+                  placeholder='Email'
+                />
+                <Input
+                  name='password'
+                  register={register}
+                  rule={rule.password}
+                  autoComplete='on'
+                  className='mt-2'
+                  errorMessage={errors.password?.message}
+                  type='password'
+                  placeholder='Mật khẩu'
+                />
+
+                <Input
+                  name='confirm_password'
+                  register={register}
+                  rule={rule.password_confirm}
+                  autoComplete='on'
+                  className='mt-2'
+                  errorMessage={errors.confirm_password?.message}
+                  type='password'
+                  placeholder='Nhập lại mật khẩu'
+                />
+
                 <button
                   type='submit'
                   className='btn btn-blue mt-2 w-full bg-ordens p-3 text-center text-sm text-white hover:bg-orange-600'
