@@ -1,24 +1,39 @@
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import rules from 'src/utils/rules'
+import { TypeFormDataRegister, rulesYup } from 'src/utils/rules'
+import { yupResolver } from '@hookform/resolvers/yup'
 import Input from 'src/components/Input'
+import { useMutation } from 'react-query'
+import { registerApi } from 'src/apis/auth.api'
+import { omit } from 'lodash'
 
-interface FormType {
-  email: string
-  password: string
-  confirm_password: string
-}
+// interface FormType {
+//   email: string
+//   password: string
+//   confirm_password: string
+// }
+type FormType = TypeFormDataRegister
 export default function Register() {
   const {
     handleSubmit,
     register,
-    getValues,
     formState: { errors }
-  } = useForm<FormType>()
-  const onsubmit = handleSubmit((value) => {
-    console.log(value)
+  } = useForm<FormType>({
+    resolver: yupResolver(rulesYup)
   })
-  const rule = rules(getValues)
+  const registerAccountMutation = useMutation({
+    mutationFn: (body: Omit<TypeFormDataRegister, 'confirm_password'>) => registerApi(body)
+  })
+  const onsubmit = handleSubmit((value) => {
+    const body = omit(value, ['confirm_password'])
+    console.log(body)
+    registerAccountMutation.mutate(body, {
+      onSuccess: (data) => {
+        console.log(data)
+      }
+    })
+  })
+  // const rule = rules(getValues)
   // watch('password') lắng nghe onchange input làm render lại component => mặc định dùng react hook form k render khi nhập input
   return (
     <div>
@@ -31,7 +46,6 @@ export default function Register() {
                 <Input
                   name='email'
                   register={register}
-                  rule={rule.email}
                   autoComplete='on'
                   className='mt-8'
                   errorMessage={errors.email?.message}
@@ -41,7 +55,6 @@ export default function Register() {
                 <Input
                   name='password'
                   register={register}
-                  rule={rule.password}
                   autoComplete='on'
                   className='mt-2'
                   errorMessage={errors.password?.message}
@@ -52,7 +65,6 @@ export default function Register() {
                 <Input
                   name='confirm_password'
                   register={register}
-                  rule={rule.password_confirm}
                   autoComplete='on'
                   className='mt-2'
                   errorMessage={errors.confirm_password?.message}

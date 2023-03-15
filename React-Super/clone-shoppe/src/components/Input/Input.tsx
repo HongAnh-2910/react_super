@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { UseFormRegister, RegisterOptions } from 'react-hook-form'
 
 interface Props {
@@ -6,7 +7,7 @@ interface Props {
   placeholder?: string
   register: UseFormRegister<any>
   name: string
-  rule: RegisterOptions
+  rule?: RegisterOptions
   errorMessage?: string
   autoComplete?: string
 }

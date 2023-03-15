@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useIsFetching, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { deleteStudent, getStudent, getStudents } from 'utils/callApiStudent/apiGetStudents'
 import useCustomerQuerySting from 'utils/useCustomerQuerySting'
@@ -8,6 +8,7 @@ const LIMIT = 10
 export default function Students() {
   const { _page } = useCustomerQuerySting()
   const queryClient = useQueryClient()
+
   const page: number | 1 = Number(_page) || 1
   const { isLoading, data } = useQuery({
     queryKey: ['students', page],
@@ -16,6 +17,8 @@ export default function Students() {
     cacheTime: 3 * 60 * 1000,
     keepPreviousData: true
   })
+  const isFetch = useIsFetching(['students', page])
+  console.log(isFetch)
   const deleteRow = useMutation({
     mutationFn: (id: string | number) => deleteStudent(id),
     onSuccess: () => {
